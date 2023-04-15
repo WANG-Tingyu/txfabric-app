@@ -1,0 +1,50 @@
+.token-login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    }
+    
+    .token-login-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 400px;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .token-login-input {
+    margin-bottom: 16px;
+    padding: 10px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    }
+    
+    .token-login-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    }
+    
+    .token-login-button {
+    margin-top: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #448196;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    }
+    
+    .token-login-button:hover {
+    background-color: #306577;
+    }
