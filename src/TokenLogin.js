@@ -1,96 +1,60 @@
 import React, { useState } from 'react';
-import './TokenLogin.css';
-import Token from 'node-etoken-lib';
-import axios from 'axios';
+import pkcs11 from 'pkcs11js';
+
+const TOKEN_LABEL = '44059D53E83935412FC3BE525D6C2B09D94BFA5F';
+const PIN_LENGTH = 9;
 
 function TokenLogin() {
-  const [errorMessage, setErrorMessage] = useState('');
+  const [pin, setPin] = useState('');
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Initialize token object
-    const token = new Token();
-
-    // Load library file
-    const lib = token.loadPKCS11Library('/Users/daisy/Desktop/libeToken.dylib');
-
-    // List available slots (terminals)
-    const slots = token.getSlots(lib);
-
-    // Check if a token is present
-    if (slots.length === 0) {
-      setErrorMessage('No token is recognized.');
-      return;
-    }
-
-    // Get PIN from input field
-    const pin = e.target.pin.value;
-
-    // Check if PIN is not empty
-    if (!pin) {
-      setErrorMessage('PIN is empty.');
-      return;
-    }
-
-    // Get the first available slot
-    const slot = slots[0];
-
-    // Check if the token is present in the slot
-    if (!token.isTokenPresent(slot)) {
-      setErrorMessage('No token is present in the slot.');
-      return;
-    }
-
-    // Open the session
-    const session = token.openSession(slot);
-
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     try {
-      // Login to the token with the given PIN
-      token.login(session, pin);
+      const session = await openSession();
+      const isValid = await verifyPin(session);
+      if (isValid) {
+        // Login success, redirect to home page
+        window.location.href = '/';
+      } else {
+        setError('Invalid PIN');
+      }
+      await session.logout();
+      await session.close();
+    } catch (e) {
+      console.error(e);
+      setError('Failed to login, please try again later');
+    }
+  };
 
-      // Get the user's certificate from the token
-      const cert = token.getCertificate(session);
+  const openSession = async () => {
+    const mod = pkcs11.Module.load('/usr/local/lib/libeTPkcs11.dylib');
+    mod.initialize();
+    const slots = mod.getSlots();
+    const slot = slots.find(s => s.getToken().label === TOKEN_LABEL);
+    const session = slot.open(pkcs11.CKF_SERIAL_SESSION | pkcs11.CKF_RW_SESSION);
+    return session;
+  };
 
-      // Convert the certificate to PEM format
-      const pem = token.getCertificatePEM(cert);
-
-      // Send the certificate to the backend to authenticate the user
-      axios.post('http://localhost:4000/authenticate', { certificate: pem })
-        .then((response) => {
-          console.log(response);
-          // TODO: handle successful authentication
-        })
-        .catch((error) => {
-          console.error(error);
-          setErrorMessage('Authentication failed. Please try again.');
-        });
-    } catch (error) {
-      console.error(error);
-      setErrorMessage('Invalid PIN. Please try again.');
-    } finally {
-      // Close the session
-      token.closeSession(session);
+  const verifyPin = async (session) => {
+    const pinBuf = pkcs11.Utils.str2buf(pin.padEnd(PIN_LENGTH, '\0'));
+    try {
+      session.login(pkcs11.CKU_USER, pinBuf);
+      return true;
+    } catch (e) {
+      return false;
     }
   };
 
   return (
-    <div className="token-login-container">
-      <form onSubmit={handleSubmit}>
-        <h1>Token Login</h1>
-        <div className="form-group">
-          <label htmlFor="pin">PIN</label>
-          <input
-            type="password"
-            id="pin"
-            name="pin"
-          />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-    </div>
+    <form onSubmit={handleSubmit}>
+      <label>
+        PIN:
+        <input type="password" value={pin} onChange={event => setPin(event.target.value)} />
+      </label>
+      <button type="submit">Login</button>
+      {error && <div>{error}</div>}
+    </form>
   );
 }
-
 export default TokenLogin;
