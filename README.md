@@ -1,3 +1,7 @@
+Backend: https://github.com/WANG-Tingyu/ShareNetwork-Fabric.git
+Frontend: https://github.com/WANG-Tingyu/txfabric-app.git
+Demo: https://youtu.be/K3EcpkUQH8I
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
