@@ -1,6 +1,29 @@
-Backend: https://github.com/WANG-Tingyu/ShareNetwork-Fabric.git
-Frontend: https://github.com/WANG-Tingyu/txfabric-app.git
-Demo: https://youtu.be/K3EcpkUQH8I
+# SECURED REAL-TIME DATA SHARING/EXCHANGE NETWORK (PLATFORM)
+- This is Frontend of REAL-TIME DATA SHARING/EXCHANGE NETWORK (PLATFORM).
+- Backend: https://github.com/WANG-Tingyu/ShareNetwork-Fabric.git
+- Demo: https://youtu.be/K3EcpkUQH8I
+
+This is a platform based on Hyperledger Fabric connecting multiple parties (in a distributed network). Each party owns data assets in 3 categories: i) public, ii) shared and iii) private. There is a need to exchange shared data assets between certain parties via secured channels on the platform. These information is highly sensitive and shall not sit in a centralized 3rd party server. Any modification of the shared information shall be shared within the same channel and audit trailed. Data security is the key and unauthorized alternation to the shared data asset shall be prohibited and any intend action should be traceable.
+
+![F0](images/f0.png)
+- Accommodate Users
+  - Human employees
+  - Bots
+
+- Data Categories
+
+   - Public
+   - Shared
+   - Private
+
+- Security Measures
+   - Endorsement for data sharing and modifications 
+   - Chaincode for auditability and traceability
+
+- User Experience
+  - Intuitive user interface 
+  - Robust API for seamless interaction
+
 
 # Getting Started with Create React App
 
